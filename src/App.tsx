@@ -1,25 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useReducer, useState } from 'react';
+
 import './App.css';
+import Cards from './Components/Card';
+import AddedUsers from './Components/AddedUsers';
+export interface IUserInfo {
+  name: string,
+  age: string
+}
+
+type simpleType = IUserInfo[];
 
 function App() {
+  const [addedUsers, setAddedUsers] = useState<simpleType>();
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  useEffect(()=> {
+
+  },[addedUsers]);
+
+  const getAddUser = (userInfo: simpleType) => {
+    setAddedUsers(userInfo);
+  }
+
+  const deleteUser = (index: number) => {
+    const userToDelete = addedUsers != null ? addedUsers[index] : null;
+    if (userToDelete) {
+      addedUsers?.splice(addedUsers.indexOf(userToDelete), 1);
+    }
+    setAddedUsers(set => addedUsers);
+    //força os componentes a re-render
+    forceUpdate()
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <Cards
+        onAddUser={getAddUser}
+        Id={Math.random().toString()}
+        FieldName='Username'>
+      </Cards>
+      {addedUsers?.map((x, index) =>
+          <AddedUsers 
+            key={index}
+            UserData={x}
+            Index={index}
+            OnDelete={deleteUser}/>
+        )
+      }
+    </React.Fragment>
   );
 }
 
